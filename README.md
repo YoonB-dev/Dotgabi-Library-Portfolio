@@ -1,19 +1,34 @@
 # CardGame / Dotgabi-Library Unity Project (Portfolio ver.)
-
-> Unity 기반 로그라이크 덱빌딩 카드게임 포트폴리오
+> ⚠️ 이 프로젝트는 [도깨비 서재]의 전체 프로덕션 리포지토리 전체를 공개하는 것이 아니라, 핵심 구조만 정리한 형태입니다. ⚠️
 
 ## 🎬 Gameplay Video
 
-[![Gameplay Video](https://www.youtube.com/watch?v=s6zWVLyH_Q0)](https://www.youtube.com/watch?v=s6zWVLyH_Q0)
+[![프로젝트 시연 영상](https://img.youtube.com/vi/s6zWVLyH_Q0/hqdefault.jpg)](https://www.youtube.com/watch?v=s6zWVLyH_Q0)
 
 ## 🖼️ Screenshots / Gallery
+
+<table>
+  <tr>
+    <td align="center">
+      <img width="260" alt="Battle Scene" src="https://github.com/user-attachments/assets/7b4bf3f8-f877-4cca-8c69-11f2ce9b8317" />
+      <br><b>Battle Scene</b>
+    </td>
+    <td align="center">
+      <img width="260" alt="Stage Select Scene" src="https://github.com/user-attachments/assets/288ab747-15ec-4023-a3fe-8a891755e1da" />
+      <br><b>Stage Select Scene</b>
+    </td>
+    <td align="center">
+      <img width="260" alt="Event Select Scene" src="https://github.com/user-attachments/assets/7e9441be-8953-4bb4-8473-38c5527d64e7" />
+      <br><b>Event Select Scene</b>
+    </td>
+  </tr>
+</table>
 
 
 ---
 
 ## 📌 프로젝트 개요 (Overview)
-
-이 프로젝트는 Unity 엔진을 기반으로 한 턴제 카드 배틀 게임입니다. 플레이어는 카드 기반 행동을 수행하고, 적의 패턴을 읽으며, 유물과 버프를 조합해 전투를 진행합니다. 전투는 단순한 공격-방어를 넘어서, 상태 이상, 방어막, 회복, 스킬 발동, 전투 시작/종료 시 이벤트를 포함한 시스템 중심 구조로 설계되어 있습니다.
+Unity 엔진을 기반으로 한 턴제 카드 배틀 게임입니다. 플레이어는 카드 기반 행동을 수행하고, 적의 패턴을 읽으며, 유물과 버프를 조합해 전투를 진행합니다. 전투는 단순한 공격-방어를 넘어서, 상태 이상, 방어막, 회복, 스킬 발동, 전투 시작/종료 시 이벤트를 포함한 시스템 중심 구조로 설계되어 있습니다.
 
 프로젝트는 크게 다음과 같은 흐름으로 구성됩니다.
 
@@ -194,44 +209,6 @@ CardGame/
 - NuGet for Unity
 
 이 프로젝트는 일반적인 모바일 카드 RPG 구조에 맞춰, 시각 효과, 애니메이션, 서버 데이터 동기화, 전투 루프를 모두 포함하는 구성으로 설계되었습니다.
-
----
-
-## 🚀 설치 및 실행 방법 (Getting Started)
-
-### 사전 요구사항
-- Unity Hub
-- Unity 6000.2.12f1 이상 설치
-- Android 빌드 지원이 필요한 경우 Android Build Support 추가
-- Git 설치 (선택 사항)
-
-### 1) 저장소 클론
-
-```bash
-git clone <repository-url>
-cd CardGame
-```
-
-### 2) Unity에서 프로젝트 열기
-1. Unity Hub를 실행합니다.
-2. `Open` 버튼을 눌러 프로젝트 루트 폴더를 선택합니다.
-3. Unity가 패키지와 에셋을 자동으로 임포트할 때까지 기다립니다.
-4. 프로젝트 로딩이 완료되면 씬 목록을 열어 메인 흐름 씬을 확인합니다.
-
-### 3) 실행
-- Unity Editor에서 `Play` 버튼을 눌러 게임을 실행합니다.
-- 전투는 메인 시나리오 / 챌린지 시나리오 흐름을 기준으로 진행되며, 시작 화면에서 스토리와 전투 로직을 연결합니다.
-
-### 4) Android 빌드
-
-```text
-File > Build Settings > Android > Switch Platform
-```
-
-- 프로젝트에 필요한 Signing / Keystore 설정을 구성합니다.
-- `Build` 또는 `Build And Run`을 실행하면 APK/AAB 제작이 가능합니다.
-
-> 참고: 현재 프로젝트 루트에는 `user.keystore` 관련 파일이 포함되어 있어, Android 빌드용 서명 환경을 구성할 수 있습니다.
 
 ---
 
