@@ -1,5 +1,5 @@
 # CardGame / Dotgabi-Library Unity Project (Portfolio ver.)
-> ⚠️ 이 프로젝트는 [도깨비 서재]의 전체 프로덕션 리포지토리 전체를 공개하는 것이 아니라, 핵심 구조만 정리한 형태입니다. ⚠️
+> ⚠️ 이 프로젝트는 [도깨비 서재]의 전체 프로덕션 리포지토리 전체를 공개하는 것이 아니라, 핵심 구조만 정리한 형태입니다.
 
 ## 🎬 Gameplay Video
 
