@@ -530,7 +530,6 @@ public class CardFunction : SceneSingleton<CardFunction>
         }
         else if (cardAction.ExtraData.ContainsKey("delete_status_id"))
         {
-            Debug.Log($"fuck");
             int statusId = int.Parse(cardAction.ExtraData["delete_status_id"].ToString());
             switch (cardAction.Target)
             {

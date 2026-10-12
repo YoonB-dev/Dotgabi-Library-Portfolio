@@ -93,42 +93,6 @@ public class CardSystem : SceneSingleton<CardSystem>
             //CardFunction.cardF.CheckEq();
         }
 
-        //저주카드 효과 발동
-        if (player != null)
-        {
-            var p = player;
-            if (canCards[0].CardType == EnumTypes.CardType.curse)
-            {
-                if (SCENARIO_DATA.IsArtifact(27))
-                {
-                    //CardFunction.cardF.GetBuff(1, 1);
-                }
-
-                if (SCENARIO_DATA.IsArtifact(38))
-                {
-                    //수상한 부적 유물
-                }
-                else
-                {
-                    if (canCards[0].Id == 51)
-                    {
-                        //p.GetDamage(5, 1, true);
-                    }
-
-                    if (canCards[0].Id == 52)
-                    {
-                        //p.GetAction(-1, false);
-                    }
-
-                    if (canCards[0].Id == 53)
-                    {
-                        //p.GetDamage(5);
-                    }
-                }
-            }
-        }
-
-
         //카드 손 갯수 확인 코드
         if (handCards.Count <= maxCardNum && canCards[0].CardType != EnumTypes.CardType.curse)
         {

@@ -225,7 +225,7 @@ public class AchieveManager : SceneSingleton<AchieveManager>
             { "p_level", achieve.Level },
         });
 
-        bool result = bool.TryParse(response.Content, out result);
+        bool result = bool.TryParse(response.Content, out bool parsed) && parsed;
 
         // 업적 완료 처리
         if (result)

@@ -39,12 +39,7 @@ public class MysteryManager : SceneSingleton<MysteryManager>
             .Where(x => x.Place == publicPlace || x.Place == storyPlace)
             .OrderBy(x => rand.Next())
             .ToList();
-        // 이거 지워야 함!!!!
-        // eventDatas = InGameData.Instance.Events
-        //    .Where(x => x.EventNum == 4)
-        //    .OrderBy(x => rand.Next())
-        //    .ToList();
-
+            
         var eventList = new List<int>();
         foreach (var eventData in eventDatas)
         {

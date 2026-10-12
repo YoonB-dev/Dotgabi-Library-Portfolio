@@ -55,7 +55,6 @@ public class Player : CharacterBase
     }
     public void GetShield(int amount)
     {
-        Debug.Log($"GetShield: {amount}");
         GetShieldBase(amount);
         // 패시브 동작 -> 플레이어가 보호막을 얻었을 때 패시브 능력 발동
         for (int i = 0; i < EnemyManager.Instance.enemies.Count; i++)
@@ -63,7 +62,6 @@ public class Player : CharacterBase
             if (!EnemyManager.Instance.enemies[i].isDie)
             {
                 StartCoroutine(PassiveFunction.Instance?.PassiveAction(EnumTypes.EnemyPassiveTrigger.player_get_shield, EnemyManager.Instance.enemies[i], this));
-                Debug.Log("fuck!!");
             }
         }
     }

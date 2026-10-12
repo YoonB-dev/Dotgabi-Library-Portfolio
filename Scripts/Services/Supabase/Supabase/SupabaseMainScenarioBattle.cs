@@ -65,7 +65,7 @@ public class SupabaseMainScenarioBattle : Singleton<SupabaseMainScenarioBattle>
             return;
         }
 
-        bool result = bool.TryParse(response.Content, out result);
+        bool result = bool.TryParse(response.Content, out bool parsed) && parsed;
 
         if (result)
         {

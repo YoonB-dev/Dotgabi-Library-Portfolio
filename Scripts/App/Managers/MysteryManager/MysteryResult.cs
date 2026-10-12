@@ -391,7 +391,7 @@ public class MysteryResult : SceneSingleton<MysteryResult>
             return;
         }
 
-        bool result = bool.TryParse(response.Content, out result);
+        bool result = bool.TryParse(response.Content, out bool parsed) && parsed;
 
         if (result)
         {
@@ -457,7 +457,7 @@ public class MysteryResult : SceneSingleton<MysteryResult>
             return;
         }
 
-        bool result = bool.TryParse(response.Content, out result);
+        bool result = bool.TryParse(response.Content, out bool parsed) && parsed;
 
         if (result)
         {

@@ -45,7 +45,7 @@ public class SupabaseCard : Singleton<SupabaseCard>
         }
 
 
-        bool result = bool.TryParse(response.Content, out result);
+        bool result = bool.TryParse(response.Content, out bool parsed) && parsed;
 
         if (result)
         {
@@ -120,7 +120,7 @@ public class SupabaseCard : Singleton<SupabaseCard>
             return;
         }
 
-        bool result = bool.TryParse(response.Content, out result);
+        bool result = bool.TryParse(response.Content, out bool parsed) && parsed;
 
         if (result)
         {
@@ -197,7 +197,7 @@ public class SupabaseCard : Singleton<SupabaseCard>
         }
 
 
-        bool result = bool.TryParse(response.Content, out result);
+        bool result = bool.TryParse(response.Content, out bool parsed) && parsed;
 
         if (result)
         {

@@ -392,8 +392,6 @@ public class Card : MonoBehaviour
             //Debug.Log(newCardAbilitys.Count);
         }
 
-        Debug.Log("fuck");
-
         this.transform.DOScale(new Vector3(2, 2, 2), 0.2f).SetLoops(2, LoopType.Yoyo);
         SetDescription();
         yield return null;
