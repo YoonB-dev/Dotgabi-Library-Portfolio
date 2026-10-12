@@ -7,9 +7,9 @@
 
 | # | 주제 | 핵심 | 대표 코드 |
 |---|---|---|---|
-| 1 | **데이터 드리븐 카드 효과** | 카드 효과는 DB 행으로 정의합니다. 조건·추가 효과는 문자열 키로 레지스트리에서 찾아 실행합니다. 카드 실행 경로에 카드 ID 분기가 없습니다. | [`CardFunction.cs`](Scripts/Gameplay/CardSystem/CardFunction/CardFunction.cs#L15-L33), [`Condition/`](Scripts/Gameplay/CardSystem/CardFunction/Condition), [`Action/`](Scripts/Gameplay/CardSystem/CardFunction/Action) |
+| 1 | **코드 수정 없이 DB로 만드는 카드** | 카드 효과를 코드가 아니라 DB에 적힌 데이터(행동·대상·수치·발동 조건)로 정의합니다. 발동 조건과 추가 효과는 독립된 부품으로 만들어 두고, DB에 적힌 이름으로 찾아 실행합니다. 카드를 실행하는 코드에는 카드 ID로 나누는 분기가 없습니다. | [`CardFunction.cs`](Scripts/Gameplay/CardSystem/CardFunction/CardFunction.cs#L15-L33), [`Condition/`](Scripts/Gameplay/CardSystem/CardFunction/Condition), [`Action/`](Scripts/Gameplay/CardSystem/CardFunction/Action) |
 | 2 | **선택지 시스템 3종** | 콘텐츠 성격에 맞춰 이벤트(가중치 결과 묶음), 적 대화(노드 타입 트리), 메인 스토리를 나눠 설계했습니다. | [`EventDAO.cs`](Scripts/Data/DAOs/DAOs/EventDAO.cs#L83-L140), [`MysteryManager.cs`](Scripts/App/Managers/MysteryManager/MysteryManager.cs#L115), [`EnemyText.cs`](Scripts/Gameplay/Enemies/Enemy/EnemyText.cs#L89) |
-| 3 | **시드 기반 결정론** | 맵, 이벤트 순서, 랜덤 결과를 시드로 재현합니다. 재접속해도 결과가 같고, 맵은 시드만 저장합니다. | [`StageGenerator.cs`](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L21) |
+| 3 | **절차적 맵 생성 · 시드 결정론** | 노드 수량은 고정하고 배치만 섞습니다. 인접 노드끼리만 연결하고 보정해서 막다른 길이나 도달할 수 없는 노드가 없습니다. 맵, 적, 이벤트를 시드 2개로 재현해서 재접속해도 결과가 같습니다. | [`StageGenerator.cs`](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L21), [`EnemyManager.cs`](Scripts/App/Managers/MainBattle/EnemyManager.cs#L103-L139) |
 | 4 | **서버 권한 진행** | 재화·체력이 바뀔 때 클라이언트는 결과 ID만 보내고, 수치는 서버가 결정합니다. | [`MysteryResult.cs`](Scripts/App/Managers/MysteryManager/MysteryResult.cs#L188-L215) |
 | 5 | **트리거 기반 유물·패시브** | 트리거 18종과 효과 20종을 데이터로 조합합니다. 전투 코드에는 트리거 호출 지점만 둡니다. | [`ArtifactFunction.cs`](Scripts/App/Managers/ArtifactFunction.cs#L134) |
 | 6 | **런타임 기반 구조** | Entity와 DTO를 분리하고 로케일 테이블도 따로 둡니다. 20개 테이블을 병렬로 로딩하고, 싱글톤은 생명주기별로 3종을 씁니다. | [`InGameDataLoadManager.cs`](Scripts/Data/GameData/GameData/InGameDataLoadManager.cs), [`Generics/`](Scripts/Shared/Generics/Generics) |
@@ -181,18 +181,45 @@ flowchart LR
 
 ---
 
-## 3. 시드 기반 결정론: 재접속 리롤 방지와 저장량 최소화
+## 3. 절차적 맵 생성과 시드 기반 결정론
 
-로그라이크 구조라서 **앱을 껐다 켜서 결과를 다시 뽑는 것**(세이브 스커밍)을 막아야 했습니다.
+### 맵 구조
 
-- **맵**: [`StageGenerator.Generate`](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L21)
-  맵 전체를 저장하지 않고 `MapSeed`만 서버에 저장합니다. 같은 시드로 같은 맵을 다시 만듭니다.
-  아래 규칙으로 **도달할 수 없는 노드가 생기지 않도록** 보장합니다.
-  - 각 층의 양 끝 노드는 다음 층의 양 끝 노드와 연결 ([L148](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L148))
-  - 중간 노드는 인접한 노드(i-1, i, i+1)와만 연결
-  - 들어오는 간선이 없는 노드는 연결 후 따로 보정 ([L172](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L172))
-- **이벤트 순서**: 시나리오 시드로 이벤트 목록을 섞습니다 ([`SetMysteryListBySeed`](Scripts/App/Managers/MysteryManager/MysteryManager.cs#L32)).
-- **이벤트의 랜덤 대상**(유물·카드 랜덤 삭제 등): `시드 + 지금까지의 선택 횟수`로 난수를 만듭니다 ([L27](Scripts/App/Managers/MysteryManager/MysteryResult.cs#L27)). 다시 접속해도 같은 결과가 나옵니다.
+스테이지 하나는 두 막으로 나뉩니다.
+
+```text
+시작 ─ [일반 층 ×9] ─ 휴식 ─ 엘리트 ─ [일반 층 ×9] ─ 휴식 ─ 보스
+```
+
+막마다 전투 13, 미스터리 7, 상점 2, 유물 2개, 모두 24개 노드를 9개 층에 나눠 놓습니다. 그래서 일반 층에는 노드가 2~3개씩 들어갑니다.
+마지막 스테이지는 고정 시드로 "휴식 노드 3개 → 보스" 맵을 만듭니다 ([`StageManager` L58-65](Scripts/Gameplay/Stage/StageMap/StageManager.cs#L58-L65)).
+
+### 생성 알고리즘: [`StageGenerator.Generate`](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L21)
+
+| 단계 | 내용 | 코드 |
+|---|---|---|
+| 1. 타입 풀 셔플 | 정해진 수량만큼 노드 타입 목록을 만들고 시드로 섞습니다. **노드 종류별 개수는 매번 같고 위치만 바뀌어서** 판마다 밸런스 편차가 생기지 않습니다. | [L28](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L28) |
+| 2. 층별 노드 수 | 층마다 균등하게 나누고, 나머지는 무작위 층에 1개씩 더합니다. | [L37-48](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L37-L48) |
+| 3. 고정 층 삽입 | 막 끝에 휴식 층을 넣고, 전반부에는 엘리트, 후반부에는 보스 층을 넣습니다. | [L68-130](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L68-L130) |
+| 4. 간선 연결 | 양 끝 노드는 다음 층의 양 끝 노드와 연결합니다. 중간 노드는 다음 층의 인접 노드(i-1, i, i+1) 중 1~3개와만 연결해서, 멀리 떨어진 노드끼리 이어지지 않습니다. | [L137-170](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L137-L170) |
+| 5. 연결성 보정 | 들어오는 간선이 없는 노드에는 아래 층의 인접 노드에서 간선 1~2개를 추가합니다. | [L172](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L172) |
+| 6. 정렬 · 시작 노드 | 다음 노드 목록을 인덱스 순으로 정렬해 선을 그리는 순서를 고정합니다. 시작 노드는 첫 층의 모든 노드와 연결합니다. | [L201](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L201), [L206](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L206) |
+
+4~5단계 덕분에 **모든 노드에 나가는 간선과 들어오는 간선이 하나 이상** 있습니다. 즉 막다른 길이나 도달할 수 없는 노드가 생기지 않습니다.
+
+### 시드로 정해지는 것들
+
+로그라이크라서 **앱을 껐다 켜서 결과를 다시 뽑는 것**(세이브 스커밍)을 막아야 했습니다.
+그래서 랜덤 요소를 모두 시나리오 DB에 저장된 시드 2개(`mapSeed`, `generateSeed`)로 정합니다.
+
+| 대상 | 방식 | 코드 |
+|---|---|---|
+| 맵 구조 | `mapSeed`로 생성. 맵 전체를 저장하지 않고 시드만 저장한 뒤 접속할 때 다시 만듭니다. | [`StageManager` L58-65](Scripts/Gameplay/Stage/StageMap/StageManager.cs#L58-L65) |
+| 적 조우 순서 | `generateSeed`로 스테이지의 적 목록을 Fisher-Yates 셔플하고, 전투 횟수 순서대로 꺼냅니다. | [`EnemyManager` L103-139](Scripts/App/Managers/MainBattle/EnemyManager.cs#L103-L139) |
+| 이벤트 순서 | `generateSeed`로 이벤트 목록을 섞습니다. | [`SetMysteryListBySeed`](Scripts/App/Managers/MysteryManager/MysteryManager.cs#L32) |
+| 이벤트의 랜덤 대상 | `generateSeed + 지금까지의 선택 횟수`로 난수를 만듭니다 (유물·카드 랜덤 삭제 등). | [`MysteryResult` L27](Scripts/App/Managers/MysteryManager/MysteryResult.cs#L27) |
+
+다시 접속해도 같은 맵, 같은 적, 같은 결과가 나오고, 저장하는 값은 정수 2개뿐입니다.
 
 ---
 

@@ -1,6 +1,8 @@
 # CardGame / Dotgabi-Library Unity Project (Portfolio ver.)
 > ⚠️ 이 프로젝트는 [도깨비 서재]의 전체 프로덕션 리포지토리를 공개하는 것이 아니라, 핵심 구조만 정리한 형태입니다.
 
+> 🔍 **코드 리뷰어분께:** 핵심 설계(DB로 정의하는 카드 효과, 선택지 시스템, 절차적 맵 생성, 서버 검증 구조)와 해당 코드 위치는 **[HIGHLIGHTS.md](HIGHLIGHTS.md)** 에 정리해 두었습니다. 10분 읽기 순서도 함께 있습니다.
+
 ## 🎬 Gameplay Video
 
 [![프로젝트 시연 영상](https://img.youtube.com/vi/s6zWVLyH_Q0/hqdefault.jpg)](https://www.youtube.com/watch?v=s6zWVLyH_Q0)
