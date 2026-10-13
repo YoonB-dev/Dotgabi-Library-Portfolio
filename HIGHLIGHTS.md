@@ -10,7 +10,7 @@
 | 1 | **코드 수정 없이 DB로 만드는 카드** | 카드 효과를 코드가 아니라 DB에 적힌 데이터(행동·대상·수치·발동 조건)로 정의합니다. 발동 조건과 추가 효과는 독립된 부품으로 만들어 두고, DB에 적힌 이름으로 찾아 실행합니다. 카드를 실행하는 코드에는 카드 ID로 나누는 분기가 없습니다. | [`CardFunction.cs`](Scripts/Gameplay/CardSystem/CardFunction/CardFunction.cs#L15-L33), [`Condition/`](Scripts/Gameplay/CardSystem/CardFunction/Condition), [`Action/`](Scripts/Gameplay/CardSystem/CardFunction/Action) |
 | 2 | **선택지 시스템 3종** | 콘텐츠 성격에 맞춰 이벤트(가중치 결과 묶음), 적 대화(노드 타입 트리), 메인 스토리를 나눠 설계했습니다. | [`EventDAO.cs`](Scripts/Data/DAOs/DAOs/EventDAO.cs#L83-L140), [`MysteryManager.cs`](Scripts/App/Managers/MysteryManager/MysteryManager.cs#L115), [`EnemyText.cs`](Scripts/Gameplay/Enemies/Enemy/EnemyText.cs#L89) |
 | 3 | **절차적 맵 생성 · 시드 결정론** | 노드 수량은 고정하고 배치만 섞습니다. 인접 노드끼리만 연결하고 보정해서 막다른 길이나 도달할 수 없는 노드가 없습니다. 맵, 적, 이벤트를 시드 2개로 재현해서 재접속해도 결과가 같습니다. | [`StageGenerator.cs`](Scripts/Gameplay/Stage/StageMap/StageGenerator.cs#L21), [`EnemyManager.cs`](Scripts/App/Managers/MainBattle/EnemyManager.cs#L103-L139) |
-| 4 | **재화별 서버 검증 범위** | 영구 재화와 상점 구매는 상품 ID만 보내고 서버가 가격과 지급을 결정합니다. 한 판 안에서만 쓰는 런 재화는 클라이언트가 계산합니다. 조작됐을 때 피해가 번지는 범위를 기준으로 나눴습니다. | [`ShopDetailPopup.cs`](Scripts/App/Managers/PopupManager/ShopDetailPopup.cs#L45-L49), [`MysteryResult.cs`](Scripts/App/Managers/MysteryManager/MysteryResult.cs#L188-L215) |
+| 4 | **재화별 서버 검증 범위** | 영구 재화와 상점 구매는 상품 ID만 보내고 서버가 가격과 지급을 결정합니다. 한 판 안에서만 쓰는 런 재화는 클라이언트가 계산합니다. 조작됐을 때 다른 유저나 계정에 영향이 남는지를 기준으로 나눴습니다. | [`ShopDetailPopup.cs`](Scripts/App/Managers/PopupManager/ShopDetailPopup.cs#L45-L49), [`MysteryResult.cs`](Scripts/App/Managers/MysteryManager/MysteryResult.cs#L188-L215) |
 | 5 | **트리거 기반 유물·패시브** | 트리거 18종과 효과 20종을 데이터로 조합합니다. 전투 코드에는 트리거 호출 지점만 둡니다. | [`ArtifactFunction.cs`](Scripts/App/Managers/ArtifactFunction.cs#L134) |
 | 6 | **런타임 기반 구조** | Entity와 DTO를 분리하고 로케일 테이블도 따로 둡니다. 20개 테이블을 병렬로 로딩하고, 싱글톤은 생명주기별로 3종을 씁니다. | [`InGameDataLoadManager.cs`](Scripts/Data/GameData/GameData/InGameDataLoadManager.cs), [`Generics/`](Scripts/Shared/Generics/Generics) |
 
@@ -227,13 +227,13 @@ flowchart LR
 
 전투는 클라이언트에서만 진행되고, 턴마다 어떤 카드를 냈는지 같은 전투 과정은 서버에 저장하지 않습니다.
 서버가 전투 보상을 검증하려면 이 과정을 모두 기록하거나 서버에서 전투를 다시 돌려야 하는데, 저장량과 구현 비용이 너무 컸습니다.
-그래서 **"조작됐을 때 피해가 어디까지 번지는가"**를 기준으로 서버가 맡을 범위를 나눴습니다. 계정에 남는 값은 서버가 결정하고, 한 판 안에서만 쓰이는 값은 클라이언트가 계산한 결과를 기록하도록 열어 두었습니다(트레이드오프).
+그래서 **"조작됐을 때 다른 유저에게 영향이 가는가, 계정에 영구히 남는가"**를 기준으로 서버가 맡을 범위를 나눴습니다. 계정에 남는 값은 서버가 결정하고, 한 판 안에서만 쓰이는 값은 클라이언트가 계산한 결과를 기록하도록 열어 두었습니다(트레이드오프).
 
 | 구분 | 예 | 처리 방식 | 코드 |
 |---|---|---|---|
 | **영구 재화 · 상점 구매** | 업적·광고 포인트로 사는 카드 프레임, 꾸미기, 캐릭터 | 계정에 영구히 남는 값이라 **서버가 결정**합니다. 클라이언트는 상품 ID나 업적 ID만 보내고, 가격 차감·보상 지급·소유 처리는 서버 RPC가 합니다. | [`buy_product`](Scripts/App/Managers/PopupManager/ShopDetailPopup.cs#L45-L49), [`user_clear_check_achieve_rpc`](Scripts/App/Managers/AchieveManager.cs#L223-L226) |
 | **이벤트 결과** | 미스터리 이벤트의 코인·체력 증감 | 결과 데이터가 DB에 있어서, 클라이언트는 결과 ID만 보내고 **증감 수치는 서버가 DB에서 조회**합니다. | [`MysteryResult`](Scripts/App/Managers/MysteryManager/MysteryResult.cs#L188-L215) |
-| **런 재화** | 한 판 안의 코인, 체력 | 판이 끝나면 초기화되고 랭킹이나 PvP처럼 다른 유저와 비교하는 요소가 없습니다. 그래서 **금액을 클라이언트가 계산해 서버에 기록**합니다. 조작해도 피해는 본인의 한 판에 그칩니다. | [`SupabaseGetScenarioCoin`](Scripts/Services/Supabase/Supabase/SupabaseGetScenarioCoin.cs#L17-L19) |
+| **런 재화** | 한 판 안의 코인, 체력 | 판이 끝나면 초기화되고 랭킹이나 PvP처럼 다른 유저와 비교하는 요소가 없습니다. 그래서 **금액을 클라이언트가 계산해 서버에 기록**합니다. 조작돼도 다른 유저에게는 영향이 없습니다. | [`SupabaseGetScenarioCoin`](Scripts/Services/Supabase/Supabase/SupabaseGetScenarioCoin.cs#L17-L19) |
 
 공통 규칙도 있습니다.
 - **로컬 상태는 서버가 성공을 응답한 뒤에만 바꿉니다.** 통신이 실패하면 화면의 값과 서버의 값이 어긋나지 않게 아무것도 바꾸지 않습니다.
