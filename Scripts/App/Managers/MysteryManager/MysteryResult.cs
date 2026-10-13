@@ -192,7 +192,6 @@ public class MysteryResult : SceneSingleton<MysteryResult>
         if (SCENARIO_DATA is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_main_scenario_hp_using_event_id", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_event_result_id", eventResultId },
             }));
         }
@@ -247,7 +246,6 @@ public class MysteryResult : SceneSingleton<MysteryResult>
         if (SCENARIO_DATA is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_main_scenario_hp_using_event_id", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_event_result_id", eventResultId }
             }));
         }
@@ -307,7 +305,6 @@ public class MysteryResult : SceneSingleton<MysteryResult>
         if (scenarioData is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("delete_user_main_scenario_artifact", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_artifact_id", artifact.Id }
             }));
         }
@@ -375,7 +372,6 @@ public class MysteryResult : SceneSingleton<MysteryResult>
         if (scenarioData is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_main_scenario_coins_using_event_id", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_event_result_id", eventResultId },
             }));
         }
@@ -441,7 +437,6 @@ public class MysteryResult : SceneSingleton<MysteryResult>
         if (SCENARIO_DATA is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_main_scenario_next_event", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_event_result_id", eventResultId }
             }));
         }

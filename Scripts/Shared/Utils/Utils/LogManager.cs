@@ -443,6 +443,6 @@ public class LogManager : SceneSingleton<LogManager>
             }
         }
 
-        SupabaseLog.Instance.LogUserAction(UserData.Instance.UserAuthId, logData, scenarioType: scenarioData);
+        SupabaseLog.Instance.LogUserAction(logData, scenarioType: scenarioData);
     }
 }

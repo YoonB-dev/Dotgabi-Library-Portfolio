@@ -14,7 +14,6 @@ public class SupabaseScenarioStage : Singleton<SupabaseScenarioStage>
         if (scenarioData is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_main_scenario_select_list", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_select_id", selectNum }
             }));
         }

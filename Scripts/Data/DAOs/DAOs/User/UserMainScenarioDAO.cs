@@ -64,7 +64,6 @@ public class UserMainScenarioDAO : Singleton<UserMainScenarioDAO>
 
         var result = await client.Rpc("insert_user_main_scenario", new Dictionary<string, object>
             {
-                { "p_user_auth_id", auth_id },
                 { "p_job_id", jobId },
                 { "p_difficulty", ((EnumTypes.Difficulty)difficulty).ToString() }
             });

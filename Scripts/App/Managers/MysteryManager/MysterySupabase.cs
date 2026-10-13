@@ -8,9 +8,7 @@ public class MysterySupabase : Singleton<MysterySupabase>
     public async void InitNextEvent()
     {
         var client = SupabaseClientProvider.Instance.Client;
-        var response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("reset_main_scenario_next_event", new Dictionary<string, object> {
-            { "p_user_auth_id", client.Auth.CurrentUser.Id }
-        }));
+        var response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("reset_main_scenario_next_event", new Dictionary<string, object> { }));
 
         bool result = bool.Parse(response.Content);
 

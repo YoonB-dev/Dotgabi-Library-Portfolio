@@ -15,7 +15,6 @@ public class SupabaseGetScenarioCoin : Singleton<SupabaseGetScenarioCoin>
         if (data is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_main_scenario_coin", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_get_amount", amount }
                 })
             );
@@ -67,7 +66,6 @@ public class SupabaseGetScenarioCoin : Singleton<SupabaseGetScenarioCoin>
         if (data is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_main_scenario_hp", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_get_amount", amount }
                 })
             );
@@ -75,7 +73,6 @@ public class SupabaseGetScenarioCoin : Singleton<SupabaseGetScenarioCoin>
         else if (data is UserChallengeScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_challenge_scenario_hp", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_get_amount", amount }
                 })
             );
@@ -121,7 +118,6 @@ public class SupabaseGetScenarioCoin : Singleton<SupabaseGetScenarioCoin>
         if (data is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_main_scenario_max_hp", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_increase_amount", amount }
             })
         );
@@ -129,7 +125,6 @@ public class SupabaseGetScenarioCoin : Singleton<SupabaseGetScenarioCoin>
         else if (data is UserChallengeScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("update_user_challenge_scenario_max_hp", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_increase_amount", amount }
             })
         );

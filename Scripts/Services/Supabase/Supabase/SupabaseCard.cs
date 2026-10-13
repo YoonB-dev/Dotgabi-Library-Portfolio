@@ -104,7 +104,6 @@ public class SupabaseCard : Singleton<SupabaseCard>
         if (userScenario is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("delete_user_main_scenario_owned_card", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_owned_id", ownedId }
             }));
         }
@@ -177,7 +176,6 @@ public class SupabaseCard : Singleton<SupabaseCard>
         if (scenarioDTO.GetType() == typeof(UserMainScenarioDTO))
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("upgrade_user_main_scenario_owned_card", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_owned_id", ownedId }
             }));
             UserData.Instance.MainScenarioData.OwnedCardList = await UserMainScenarioDAO.Instance.GetUserMainScenarioOwnedCardsAsync(client.Auth.CurrentUser.Id);
@@ -185,7 +183,6 @@ public class SupabaseCard : Singleton<SupabaseCard>
         else if (scenarioDTO.GetType() == typeof(UserChallengeScenarioDTO))
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("upgrade_user_challenge_scenario_owned_card", new Dictionary<string, object> {
-                { "p_user_auth_id", client.Auth.CurrentUser.Id },
                 { "p_owned_id", ownedId }
             }));
             UserData.Instance.ChallengeScenarioData.OwnedCardList = await UserChallengeScenarioDAO.Instance.GetUserChallengeScenarioOwnedCardsAsync(client.Auth.CurrentUser.Id);

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SupabaseLog : Singleton<SupabaseLog>
 {
-    public async void LogUserAction(string userId, UserScenarioLogDTO logData, ScenarioDTO scenarioType)
+    public async void LogUserAction(UserScenarioLogDTO logData, ScenarioDTO scenarioType)
     {
         await SupabaseClientProvider.Instance.InitializeAsync();
         var client = SupabaseClientProvider.Instance.Client;
@@ -13,7 +13,6 @@ public class SupabaseLog : Singleton<SupabaseLog>
         if (scenarioType is UserMainScenarioDTO)
         {
             response = await SupabaseWrap.ExecuteWithRefresh(() => client.Rpc("insert_user_main_scenario_log_data", new Dictionary<string, object> {
-                { "p_user_auth_id", userId },
                 { "p_log_id", logData.LogId },
                 { "p_value", logData.value},
                 { "p_card_id", logData.CardId },
